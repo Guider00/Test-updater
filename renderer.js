@@ -19,3 +19,10 @@ setButton.addEventListener('click', () => {
 // }
 // if( document.getElementById('ip') ) {
 //     document.addEventListener("DOMContentLoaded", getIP)}
+
+
+if( document.getElementById('next') ) {
+    document.getElementById('next').addEventListener('click', () => {
+        window.electronAPI.nextPage();
+    })
+}

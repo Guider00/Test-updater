@@ -9,6 +9,9 @@ const API = {
     getIP:         (ip)      => ipcRenderer.invoke('get-ip', ip),
 
     getcpuUsage:    (data)     =>   ipcRenderer.invoke('graph-cpu', data),
+    nextPage:       ()          => ipcRenderer.send('next-page',),
+
+    handleData:     (callback)  => ipcRenderer.on('cpu-data', callback),
 
 }
 contextBridge.exposeInMainWorld('electronAPI',API)
@@ -17,7 +20,7 @@ contextBridge.exposeInMainWorld('electronAPI',API)
 const global = require('./global.js')
 
 
-window.addEventListener('DOMContentLoaded', () => {
+// window.addEventListener('DOMContentLoaded', () => {
 
     // ipcRenderer.on('platform', (_event, value) => {
     //     document.getElementById('platform').innerHTML = value;
@@ -25,15 +28,15 @@ window.addEventListener('DOMContentLoaded', () => {
     // ipcRenderer.on('ip', (_event, value) => {
     //     document.getElementById('platform').innerHTML = value;
     // })
-    ipcRenderer.on('cpu',(event,data) => {
-        setcpu_data(data.toFixed(2)) 
-        const asdf = getcpu_data();
-        console.log(asdf);
-    });
+    // ipcRenderer.on('cpu',(event,data) => {
+    //     // setcpu_data(data.toFixed(2)) 
+    //     const asdf = getcpu_data();
+    //     console.log(asdf);
+    // });
     // ipcRenderer.on('free-mem',(event,data) => {
     //     document.getElementById('free-mem').innerHTML = data.toFixed(2);
     // });
     // ipcRenderer.on('total-mem',(event,data) => {
     //     document.getElementById('total-mem').innerHTML = data.toFixed(2);
     // });
-})
+// })

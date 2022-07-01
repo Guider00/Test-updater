@@ -1,89 +1,17 @@
-// const ctx = document.getElementById('myChart');
-// const myChart = new Chart(ctx, {
-//     type: 'line',
-//     data: {
-//         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-//         datasets: [{
-//             label: 'My First Dataset',
-//             data: [65, 59, 80, 81, 56, 55, 40],
-//             fill: false,
-//             borderColor: 'rgb(12, 147, 68, 255)',
-//             tension: 0.1
-//         }]
-//     },
-//     options: {
-//         scales: {
-//             y: {
-//                 beginAtZero: true
-//             }
-//         }
-//     }
-// });
 
-// const { cp } = require("original-fs");
-
-// // document.getElementById('btn').addEventListener('click', () => {
-    
-// //     addData(myChart, 'new', '35')
-// // })
-
-// function addData(chart, label, data) {
-//     chart.data.labels.push(label);
-//     chart.data.datasets.forEach((dataset) => {
-//         dataset.data.push(data);
-//     });
-//     chart.update();
-// }
-
-// function removeData(chart) {
-//     chart.data.labels.pop();
-//     chart.data.datasets.forEach((dataset) => {
-//         dataset.data.pop();
-//     });
-//     chart.update();
-// }
-
-// // window.addEventListener('DOMContentLoaded',getCPU)
-
-
-// import osutils from('os-utils');
-
-// setInterval(() => {
-//     osutils.cpuUsage(function(v){
-//       // mainWindow.webContents.send('platform', osutils.platform());
-//       // mainWindow.webContents.send('cpu',v*100);
-//       // mainWindow.webContents.send('free-mem',osutils.freememPercentage()*100);
-//       // mainWindow.webContents.send('total-mem',osutils.totalmem()/1024);
-    
-      
-
-//     window.addEventListener('DOMContentLoaded', addData(myChart, 'new', 'v'))
-      
-//     });
-//   },1000);
 
 
 //data function
-let data = 0;
+let data = null;
 
-// window.electronAPI.handleCPU((event, value) => {
-//     data = value;
-//     event.sender.send('cpu', data)
-// })
 
-window.addEventListener('DOMContentLoaded', () => {
-   
-        cpu =  getcpuUsage();
-        console.log(cpu)
-        data = cpu;
 
+window.electronAPI.handleData((event, value) => {
+    const newData = value
+    data = newData;
+    console.log(data)
+    event.sender.send('cpu-data', newData)
 })
-
-var getcpuUsage = async () => {
-    const cpuUsage = await window.electronAPI.getcpuUsage('graph-cpu')
-    console.log(cpuUsage)
-    return cpuUsage;
-}
 
 
 //graphs
@@ -107,8 +35,8 @@ var D3_CHART = {
             bottom: 20,
             left: 40,
         },
-        MAX_LENGTH:100,
-        duration:500,
+        MAX_LENGTH:30,
+        duration:1000,
         color: d3.schemeCategory10
     },
 
@@ -129,14 +57,21 @@ var D3_CHART = {
     },
 
     updateData: function(){
-        var now = new Date();
+        var now = (new Date()).getTime();
+        var startTime = now;
         var lineData = {
             time: now,
-            x: D3_CHART.randomNumberBounds(),
+            x: D3_CHART.getData(),
         };
+        console.log(now)
+        if (D3_CHART.dataSource.length < 30){
+            console.log('30!!!!')
+        }
+
         D3_CHART.dataSource.push(lineData);
         if (D3_CHART.dataSource.length > 30) {
             D3_CHART.dataSource.shift();
+            
         }
         D3_CHART.draw();
     },
@@ -162,11 +97,11 @@ var D3_CHART = {
             yScale = d3.scaleLinear().rangeRound([this.options.height-this.options.margins.top-this.options.margins.bottom, 0]),
             zScale = d3.scaleOrdinal(this.options.color);
 
-        var xMin = d3.min(self.data, function(c) { return d3.min(c.values, function(d) { return d.time; })});
         var xMax = new Date(new Date(d3.max(self.data, function(c) {
             return d3.max(c.values, function(d) { return d.time; })
         })).getTime() - 2*this.options.duration);
         //})).getTime());
+        var xMin = d3.min(self.data, function(c) { return d3.min(c.values, function(d) { return d.time; })});
 
         xScale.domain([xMin, xMax]);
         yScale.domain([0, 100]);
@@ -238,7 +173,7 @@ var D3_CHART = {
         g.selectAll("g path.data")
             .data(this.data)
             .style("stroke", function(d) { return zScale(d.label); })
-            .style("stroke-width", 1)
+            .style("stroke-width", 3)
             .style("fill", "none")
             .transition()
             .duration(this.options.duration)
@@ -284,17 +219,16 @@ var D3_CHART = {
         for (var i = 0; i < this.options.MAX_LENGTH; ++i) {
             this.dataSource.push({
                 time: new Date(now.getTime() - ((this.options.MAX_LENGTH - i) * this.options.duration)),
-                x: this.randomNumberBounds(),
-                // y: this.randomNumberBounds(0, 2.5),
-                // z: this.randomNumberBounds(0, 10)
+                x: this.getData(),
             });
         }
     },
 
     //function data
-    randomNumberBounds: function () {
+    getData: function () {
+        
         return data;
-        //return Math.floor(Math.random() * max) + min;
+
     }
 };
 

@@ -5,10 +5,12 @@ var os = require('os');
 
 
 const global = require('./global.js');
-const { getcpu_data } = require('./global.js');
+const { getcpu_data, setcpu_data } = require('./global.js');
+
+  let mainWindow;
 
 function createWindow () {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
@@ -20,18 +22,23 @@ function createWindow () {
   setInterval(() => {
     osutils.cpuUsage(function(v){
       // mainWindow.webContents.send('platform', osutils.platform());
-      mainWindow.webContents.send('cpu',v*100);
+      mainWindow.webContents.send('cpu',setcpu_data(((v*100).toFixed(2))));
+      console.log(v*100)
+      mainWindow.webContents.send('cpu-data', getcpu_data());
+      console.log(getcpu_data());
       // mainWindow.webContents.send('free-mem',osutils.freememPercentage()*100);
       // mainWindow.webContents.send('total-mem',osutils.totalmem()/1024);
     });
   },1000);
 
-  ipcMain.handle('graph-cpu', async (event, data) => {
-    const CPUdata = getcpu_data();
-    console.log(CPUdata)
-    cpu = CPUdata;
-    return cpu;
-  })
+  // ipcMain.handle('graph-cpu', async (event, data) => {
+  //   const CPUdata = getcpu_data();
+  //   console.log(CPUdata)
+  //   cpu = CPUdata;
+  //   return cpu;
+  // })
+
+
 
 
   ipcMain.on('set-title', (event, title) => {
@@ -40,7 +47,7 @@ function createWindow () {
     win.setTitle(title)
   })
 
-  mainWindow.loadFile('chart.html')
+  mainWindow.loadFile('index.html')
 }
 
 app.whenReady().then(() => {
@@ -89,3 +96,6 @@ app.on('ready', async () => {
     }
 });
 
+ipcMain.on('next-page', () => {
+  mainWindow.loadFile('chart.html')
+})
