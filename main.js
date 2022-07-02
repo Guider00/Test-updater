@@ -5,7 +5,10 @@ var os = require('os');
 
 
 const global = require('./global.js');
-const { getcpu_data, setcpu_data } = require('./global.js');
+const { getcpu_data, setcpu_data, 
+        getfreemem_data, setfreemem_data,
+        gettotalmem_data, settotalmem_data } = require('./global.js');
+const { verify } = require('crypto');
 
   let mainWindow;
 
@@ -20,15 +23,29 @@ function createWindow () {
 
 
   setInterval(() => {
+    
     osutils.cpuUsage(function(v){
-      // mainWindow.webContents.send('platform', osutils.platform());
+      mainWindow.webContents.send('platform', osutils.platform())
+      
       mainWindow.webContents.send('cpu',setcpu_data(((v*100).toFixed(2))));
-      console.log(v*100)
       mainWindow.webContents.send('cpu-data', getcpu_data());
-      console.log(getcpu_data());
-      // mainWindow.webContents.send('free-mem',osutils.freememPercentage()*100);
+
+      mainWindow.webContents.send('free-mem',setfreemem_data((osutils.freememPercentage()*100).toFixed(2)));
+      console.log('1111')
+      mainWindow.webContents.send('free-mem-data', getfreemem_data());
+      console.log(getfreemem_data())
+
+    })
+
+    // osutils.freememPercentage(function(v){
+      // mainWindow.webContents.send('free-mem',setfreemem_data(((v*100).toFixed(2))));
+      // console.log(((v*100).toFixed(2)))
+      // mainWindow.webContents.send('free-mem-data', getfreemem_data());
+      // console.log(getfreemem_data())
+    // })
+    
+
       // mainWindow.webContents.send('total-mem',osutils.totalmem()/1024);
-    });
   },1000);
 
   // ipcMain.handle('graph-cpu', async (event, data) => {

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,18 +9,26 @@
 </head>
 <body>
 
-<div id="d3_chart"></div>
+<h1>CPU Usage (%)</h1>
+<div id="cpu_chart"></div>
+
+<h1>Free Mem (%)</h1>
+<div id="freemem_chart"></div>
+
+
 
 <script src="myChart.js"></script>
 <script type="text/javascript">
     function autorun()
     {
-        D3_CHART.init();
+      CPU_CHART.CPUinit();
+      FREEMEM_CHART.FreeMeminit();
     }
     if (document.addEventListener) document.addEventListener("DOMContentLoaded", autorun, false);
     else if (document.attachEvent) document.attachEvent("onreadystatechange", autorun);
     else window.onload = autorun;
 </script>
+
 </body>
 </html>
 

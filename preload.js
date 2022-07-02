@@ -11,7 +11,8 @@ const API = {
     getcpuUsage:    (data)     =>   ipcRenderer.invoke('graph-cpu', data),
     nextPage:       ()          => ipcRenderer.send('next-page',),
 
-    handleData:     (callback)  => ipcRenderer.on('cpu-data', callback),
+    handleCPUData:         (callback)  => ipcRenderer.on('cpu-data', callback),
+    handleFreeMemData:     (callback)  => ipcRenderer.on('free-mem-data', callback),
 
 }
 contextBridge.exposeInMainWorld('electronAPI',API)
